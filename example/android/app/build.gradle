@@ -60,12 +60,12 @@ repositories {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation (name: 'youe_ad_sdk_v1.3.5.0', ext: 'aar')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+//    implementation (name: 'youe_ad_sdk_v1.3.5.0', ext: 'aar')
 
-    implementation "org.jetbrains.kotlin:kotlin-reflect:1.4.21"
     implementation 'com.squareup.picasso:picasso:2.71828'
-    //gson
+    //gson,若您的项目中
     implementation 'com.google.code.gson:gson:2.8.4'
 
     implementation 'androidx.multidex:multidex:2.0.1'

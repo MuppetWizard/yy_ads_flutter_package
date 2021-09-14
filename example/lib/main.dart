@@ -123,16 +123,17 @@ class HomePage extends StatelessWidget{
               child: const Text("加载Draw信息流广告"),
               style: style,
             ),
-            Container(
+          /*  Container(
               width: width,
               height: height,
-              child: AndroidView(
+              child: *//*AndroidView(
                 viewType: YyAds.DRAW_STREAM_VIEW,
+              ),*//*
+              AndroidView(
+                  viewType: YyAds.BANNER_VIEW
               ),
-            ),
-            AndroidView(
-                viewType: YyAds.SPLASH_VIEW
-            ),
+            ),*/
+
            Container(
              width: width,
              height: 300,
@@ -141,7 +142,8 @@ class HomePage extends StatelessWidget{
                children: [
                  Expanded(
                    child: AndroidView(
-                     viewType: YyAds.NATIVE_STREAM_VIEW,
+                     // viewType: YyAds.NATIVE_STREAM_VIEW,
+                       viewType: YyAds.BANNER_VIEW,
                    ),
                  ),
                ],
@@ -176,7 +178,7 @@ void loadSplash() async{
         AdConfig.setPlacementId:"0000000040",
         AdConfig.isCarousel: false,
         AdConfig.setWidth: width.toInt(),
-        AdConfig.setHeight: width * 58/375,
+        AdConfig.setHeight: width * 58~/375,
       });
       stream.listen(_onToDart, onError: _onToDartError, onDone: _onDone);
     } on PlatformException catch(s){

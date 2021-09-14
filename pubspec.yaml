@@ -1,7 +1,6 @@
 name: yy_ads
-description: A new Flutter plugin for Android.
-version: 1.0.0
-author: Muppet
+description: A Ads Flutter plugin for Android.
+version: 1.0.1
 homepage: https://hlhjapp.com/user/operation/sdkDownload.html
 
 environment:
