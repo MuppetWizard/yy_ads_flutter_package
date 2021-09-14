@@ -4,6 +4,6 @@
 test/
 .packages
 .pub/
-example/
+
 build/
 pubspec.lock
