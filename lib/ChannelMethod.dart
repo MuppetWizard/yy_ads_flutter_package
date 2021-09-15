@@ -1,6 +1,4 @@
-
-
-class ChannelName{
+class ChannelName {
   static const String METHOD_CHANNEL = "com.youyi.yyAds_method";
   static const String EVENT_CHANNEL = "com.youyi.yyAds_event";
   static const String LOAD_SPLASH = "loadSplash";
