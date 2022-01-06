@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import androidx.annotation.NonNull
 import com.youyi.yy_ads.factory.AndroidViewFactory
+import com.youyi.yy_ads.factory.SdkViewPipe
 import com.youyi.yy_ads.manager.*
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -29,27 +30,33 @@ class YyAdsPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
     methodChannel = MethodChannel(flutterPluginBinding.binaryMessenger, Const.METHOD_CHANNEL)
     eventChannel = EventChannelManager.registerWith(flutterPluginBinding.binaryMessenger,  Const.EVENT_CHANNEL)
     appContext = flutterPluginBinding.applicationContext
-    methodChannel.setMethodCallHandler(this)
-    
+
     flutterPluginBinding.platformViewRegistry.apply {
       registerViewFactory(Const.SPLASH_VIEW_ID,splashViewFactory)
       registerViewFactory(Const.BANNER_VIEW_ID, bannerViewFactory)
       registerViewFactory(Const.STREAM_VIEW_ID,streamViewFactory)
       registerViewFactory(Const.DRAW_STREAM_VIEW_ID,drawStreamViewFactory)
     }
+    methodChannel.setMethodCallHandler(this)
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
     when (call.method) {
       
       Const.ChannelMethod.LOAD_SPLASH-> {
-        val splash = SplashAdForFlutter(activity,splashViewFactory)
-        splash.loadBSplash(call,eventChannel)
+        val splash = SplashAdForFlutter(activity)
+        splashViewFactory.setViewFactoryListener(object : AndroidViewFactory.FactoryListener{
+          override fun onReady(viewPipe: SdkViewPipe?) {
+            splash.loadBSplash(call,eventChannel,viewPipe!!)
+          }
+        })
       }
       
       Const.ChannelMethod.LOAD_BANNER -> {
-        val banner = BannerAdForFlutter(activity,bannerViewFactory)
-        banner.loadBanner(call,eventChannel)
+        val banner = BannerAdForFlutter(activity)
+        if (bannerViewFactory.isCreate){
+          banner.loadBanner(call,eventChannel,bannerViewFactory)
+        }
       }
       
       Const.ChannelMethod.LOAD_INTERSTITIAL -> {
@@ -65,12 +72,12 @@ class YyAdsPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
         rewardVideo.loadRewardAd(call,eventChannel)
       }
       Const.ChannelMethod.LOAD_NATIVE_STREAM -> {
-        val streamAd = NativeStreamForFlutter(activity,streamViewFactory)
-        streamAd.loadNativeStream(call,eventChannel)
+        val streamAd = NativeStreamForFlutter(activity)
+        streamAd.loadNativeStream(call,eventChannel,streamViewFactory)
       }
       Const.ChannelMethod.LOAD_NATIVE_DRAW_STREAM -> {
-        val drawStream = DrawStreamForFlutter(activity,drawStreamViewFactory)
-        drawStream.loadDrawStream(call,eventChannel)
+        val drawStream = DrawStreamForFlutter(activity)
+        drawStream.loadDrawStream(call,eventChannel,drawStreamViewFactory)
       }
       else -> result.notImplemented()
     }

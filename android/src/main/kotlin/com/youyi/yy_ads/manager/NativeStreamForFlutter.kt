@@ -7,6 +7,7 @@ import com.youyi.yesdk.listener.*
 import com.youyi.yy_ads.factory.AndroidViewFactory
 import com.youyi.yy_ads.Const
 import com.youyi.yy_ads.EventChannelManager
+import com.youyi.yy_ads.factory.SdkViewPipe
 import io.flutter.plugin.common.MethodCall
 
 /**
@@ -15,13 +16,12 @@ import io.flutter.plugin.common.MethodCall
  * @date: 2021/9/1
  */
 class NativeStreamForFlutter(
-        private val context: Activity,
-        private val factory: AndroidViewFactory
+        private val context: Activity
 ) {
     private var nativeStreamAd: StreamAd? = null
     private var streamView: StreamAdExpress? = null
 
-    fun loadNativeStream(call: MethodCall, eventResult: EventChannelManager) {
+    fun loadNativeStream(call: MethodCall, eventResult: EventChannelManager,factory: AndroidViewFactory?) {
         val placementId = call.argument<String>(Const.CallParams.placementId)
         val width = call.argument<Int>(Const.CallParams.width)
         val height = call.argument<Int>(Const.CallParams.height)
@@ -32,10 +32,10 @@ class NativeStreamForFlutter(
         }.build()
         nativeStreamAd = StreamAd()
         nativeStreamAd?.setStreamConfig(context,config)
-        nativeStreamAd?.loadStreamAd(bindAdListener(eventResult))
+        nativeStreamAd?.loadStreamAd(bindAdListener(eventResult,factory?.getViewPipe))
     }
 
-    private fun bindAdListener(eventResult: EventChannelManager) = object : StreamAdListener {
+    private fun bindAdListener(eventResult: EventChannelManager, viewPipe: SdkViewPipe?) = object : StreamAdListener {
         override fun onAdLoaded(ads: ArrayList<StreamAdExpress>) {
             if (ads.size <= 0){
                 eventResult.sendError(4401.toString(),"No Data","No Data")
@@ -44,9 +44,9 @@ class NativeStreamForFlutter(
             }
             eventResult.send("onAdLoaded")
             streamView = ads[0].apply {
-                setStreamAdInteractionListener(bindInteractionListener(eventResult))
+                setStreamAdInteractionListener(bindInteractionListener(eventResult,viewPipe))
                 setStreamVideoAdListener(bindVideoListener(eventResult))
-                setStreamAdDislikeCallback(bindDislikeListener(eventResult))
+                setStreamAdDislikeCallback(bindDislikeListener(eventResult,viewPipe))
                 setDownloadConfirmListener()
                 render()
             }
@@ -60,7 +60,7 @@ class NativeStreamForFlutter(
     }
 
     /** 交互监听 */
-    private fun bindInteractionListener(eventResult: EventChannelManager) = object :StreamAdInteractionListener {
+    private fun bindInteractionListener(eventResult: EventChannelManager, viewPipe: SdkViewPipe?) = object :StreamAdInteractionListener {
         override fun onAdClicked() {
             eventResult.send("onAdClicked")
         }
@@ -81,8 +81,15 @@ class NativeStreamForFlutter(
         }
 
         override fun onRenderSuccess() {
-            eventResult.send("onRenderSuccess")
-            streamView?.let { factory.getViewPipe()?.addView(it.getStreamView()) }
+            streamView?.let {
+                val mView = it.getStreamView()
+                if (mView != null) {
+                    eventResult.send("onRenderSuccess")
+                    viewPipe?.addView(mView)
+                }else{
+                    eventResult.sendError("60004", "onRenderFailed","render view is Null")
+                }
+            }
         }
     }
 
@@ -110,13 +117,13 @@ class NativeStreamForFlutter(
     }
 
     /** Dislike listener */
-    private fun bindDislikeListener(eventResult: EventChannelManager) = object : DislikeListener {
+    private fun bindDislikeListener(eventResult: EventChannelManager, viewPipe: SdkViewPipe?) = object : DislikeListener {
         override fun onCancel() {
             eventResult.send("onDislikeCancel")
         }
 
         override fun onSelected(p0: Int, p1: String?, p2: Boolean) {
-            factory.getViewPipe()?.removeAllViews()
+            viewPipe?.removeAllViews()
         }
 
         override fun onShow() {

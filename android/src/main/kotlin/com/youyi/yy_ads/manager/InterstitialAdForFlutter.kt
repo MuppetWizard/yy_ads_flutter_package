@@ -2,6 +2,7 @@ package com.youyi.yy_ads.manager
 
 import android.app.Activity
 import com.youyi.yesdk.ad.InterstitialAd
+import com.youyi.yesdk.ad.YOUEAdConstants
 import com.youyi.yesdk.business.AdPlacement
 import com.youyi.yesdk.listener.InterstitialAdListener
 import com.youyi.yy_ads.Const
@@ -21,11 +22,10 @@ class InterstitialAdForFlutter(
 
     fun loadInterstitial(call: MethodCall, result: EventChannelManager) {
         val placementId = call.argument<String>(Const.CallParams.placementId)
-        val isVertical = call.argument<Int>(Const.CallParams.orientation)
+        val orientation = call.argument<Int>(Const.CallParams.orientation)
         val config = AdPlacement.Builder().apply {
             setAdId(placementId!!)
-//                if (isVertical)
-            if (isVertical == 1) isVertical(true) else isVertical(false)
+            isVertical(orientation == YOUEAdConstants.VERTICAL)
             setMinVideoDuration(5)//设置视频广告最小时长
             setMaxVideoDuration(61)//设置视频广告最大时长
         }.build()

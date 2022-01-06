@@ -2,7 +2,6 @@ package com.youyi.yy_ads.manager
 
 import android.app.Activity
 import com.youyi.yesdk.ad.DrawStreamAd
-import com.youyi.yesdk.ad.StreamAd
 import com.youyi.yesdk.business.AdPlacement
 import com.youyi.yesdk.listener.StreamAdExpress
 import com.youyi.yesdk.listener.StreamAdInteractionListener
@@ -11,6 +10,7 @@ import com.youyi.yesdk.listener.UEVideoListener
 import com.youyi.yy_ads.Const
 import com.youyi.yy_ads.EventChannelManager
 import com.youyi.yy_ads.factory.AndroidViewFactory
+import com.youyi.yy_ads.factory.SdkViewPipe
 import io.flutter.plugin.common.MethodCall
 
 /**
@@ -19,13 +19,12 @@ import io.flutter.plugin.common.MethodCall
  * @date: 2021/9/1
  */
 class DrawStreamForFlutter(
-        private val context: Activity,
-        private val factory: AndroidViewFactory
+        private val context: Activity
 ) {
     private var drawStreamAd: DrawStreamAd? = null
     private var streamView: StreamAdExpress? = null
 
-    fun loadDrawStream(call: MethodCall, eventResult: EventChannelManager) {
+    fun loadDrawStream(call: MethodCall, eventResult: EventChannelManager,factory: AndroidViewFactory?) {
         val placementId = call.argument<String>(Const.CallParams.placementId)
         val width = call.argument<Int>(Const.CallParams.width)
         val height = call.argument<Int>(Const.CallParams.height)
@@ -37,11 +36,11 @@ class DrawStreamForFlutter(
         }.build()
         drawStreamAd = DrawStreamAd()
         drawStreamAd?.setDrawStreamConfig(context,config)
-        drawStreamAd?.loadDrawStreamAd(bindAdListener(eventResult))
+        drawStreamAd?.loadDrawStreamAd(bindAdListener(eventResult,factory?.getViewPipe))
 
     }
 
-    private fun bindAdListener(eventResult: EventChannelManager) = object :StreamAdListener {
+    private fun bindAdListener(eventResult: EventChannelManager, viewPipe: SdkViewPipe?) = object :StreamAdListener {
         override fun onAdLoaded(ads: ArrayList<StreamAdExpress>) {
             if (ads.size <= 0){
                 eventResult.sendError(4401.toString(),"No Data","No Data")
@@ -50,7 +49,7 @@ class DrawStreamForFlutter(
             }
             eventResult.send("onAdLoaded")
             streamView = ads[0].apply {
-                setStreamAdInteractionListener(bindInteractionListener(eventResult))
+                setStreamAdInteractionListener(bindInteractionListener(eventResult,viewPipe))
                 setStreamVideoAdListener(bindVideoListener(eventResult))
                 setDownloadConfirmListener()
                 render()
@@ -65,7 +64,7 @@ class DrawStreamForFlutter(
     }
 
     /** 交互监听 */
-    private fun bindInteractionListener(eventResult: EventChannelManager) = object : StreamAdInteractionListener {
+    private fun bindInteractionListener(eventResult: EventChannelManager, viewPipe: SdkViewPipe?) = object : StreamAdInteractionListener {
         override fun onAdClicked() {
             eventResult.send("onAdClicked")
         }
@@ -86,8 +85,16 @@ class DrawStreamForFlutter(
         }
 
         override fun onRenderSuccess() {
-            eventResult.send("onRenderSuccess")
-            streamView?.let { factory.getViewPipe()?.addView(it.getStreamView()) }
+            streamView?.let {
+                val mView = it.getStreamView()
+                if (mView != null){
+                    eventResult.send("onRenderSuccess")
+                    viewPipe?.addView(mView)
+                }else{
+                    eventResult.sendError("60004", "onRenderFailed","render view is Null")
+                }
+
+            }
         }
     }
 

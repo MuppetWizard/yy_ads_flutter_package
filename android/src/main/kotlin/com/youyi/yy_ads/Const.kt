@@ -37,6 +37,9 @@ object Const {
             const val isCarousel = "isCarousel"
             const val orientation = "orientation"
 
+            const val splashClickType = "splashClickType"
+            const val splashInteractionType = "splashInteractionType"
+
             const val userId = "userId"
             const val customData = "customData"
             const val scenes = "scenes"

@@ -94,6 +94,8 @@ class YyAds {
 class AdConfig {
   static const String setPlacementId = "placementId";
   static const String setTimeout = "timeout";
+  static const String setSplashClickType = "splashClickType";
+  static const String setInteractionType = "splashInteractionType";
   static const String setWidth = "width";
   static const String setHeight = "height";
   static const String isCarousel = "isCarousel";
@@ -105,6 +107,12 @@ class AdConfig {
 
   static const int VERTICAl = 1;
   static const int HORIZENTAL = 2;
+
+  static const int LIMIT_CLICK_AREA = 2;
+  static const int FULL_SCREEN_AREA = 1;
+  static const int SPLASH_NORMAL = 3;
+  static const int SPLASH_SHAKE = 4;
+  static const int SPLASH_SLIP = 5;
 }
 
 /// 激励视频场景

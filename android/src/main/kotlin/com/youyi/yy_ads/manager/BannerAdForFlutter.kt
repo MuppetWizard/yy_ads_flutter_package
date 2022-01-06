@@ -5,9 +5,10 @@ import android.view.View
 import com.youyi.yesdk.ad.BannerAd
 import com.youyi.yesdk.business.AdPlacement
 import com.youyi.yesdk.listener.BannerAdListener
-import com.youyi.yy_ads.factory.AndroidViewFactory
 import com.youyi.yy_ads.Const
 import com.youyi.yy_ads.EventChannelManager
+import com.youyi.yy_ads.factory.AndroidViewFactory
+import com.youyi.yy_ads.factory.SdkViewPipe
 import io.flutter.plugin.common.MethodCall
 
 /**
@@ -16,12 +17,11 @@ import io.flutter.plugin.common.MethodCall
  * @date: 2021/8/27
  */
 class BannerAdForFlutter(
-        private val context: Activity,
-        private val factory: AndroidViewFactory
+        private val context: Activity
 ) {
     private var bannerAd:BannerAd? = null
 
-    fun loadBanner(call: MethodCall, eventChannel: EventChannelManager) {
+    fun loadBanner(call: MethodCall, eventChannel: EventChannelManager, factory: AndroidViewFactory?) {
         val placementId = call.argument<String>(Const.CallParams.placementId)
         val isCarousel = call.argument<Boolean>(Const.CallParams.isCarousel)
         val w = call.argument<Int>(Const.CallParams.width)
@@ -33,10 +33,10 @@ class BannerAdForFlutter(
         }.build()
         bannerAd = BannerAd()
         bannerAd?.setBannerConfig(context,config)
-        bannerAd?.loadAdBanner(bindAdListener(eventChannel))
+        bannerAd?.loadAdBanner(bindAdListener(eventChannel,factory?.getViewPipe))
     }
 
-    private fun bindAdListener(eventChannel: EventChannelManager) = object : BannerAdListener {
+    private fun bindAdListener(eventChannel: EventChannelManager,viewPipe: SdkViewPipe?) = object : BannerAdListener {
         override fun onAdCloseOverLay() {
             eventChannel.send("onAdCloseOverLay")
         }
@@ -48,7 +48,7 @@ class BannerAdForFlutter(
         override fun onClosed() {
             eventChannel.send("onClosed")
             eventChannel.cancel()
-            factory.getViewPipe()?.removeAllViews()
+            viewPipe?.removeAllViews()
             destroy()
         }
 
@@ -58,7 +58,7 @@ class BannerAdForFlutter(
 
         override fun onDislikeSelected(code: Int, msg: String?) {
             eventChannel.send("onDislikeSelected")
-            factory.getViewPipe()?.removeAllViews()
+            viewPipe?.removeAllViews()
         }
 
         override fun onDislikeShow() {
@@ -71,8 +71,8 @@ class BannerAdForFlutter(
         }
 
         override fun onLoaded(view: View?) {
-            view?.let { factory.getViewPipe()?.addView(it) } ?: eventChannel.sendError("10000","The View is Null","onError")
             eventChannel.send("onLoaded")
+            view?.let { viewPipe?.addView(it) } ?: eventChannel.sendError("10000","The View is Null","onError")
 
         }
 

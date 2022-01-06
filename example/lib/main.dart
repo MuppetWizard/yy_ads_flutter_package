@@ -39,16 +39,18 @@ class HomePage extends StatelessWidget {
     final ButtonStyle style =
         ElevatedButton.styleFrom(textStyle: const TextStyle(fontSize: 20));
     return new Scaffold(
-      /* appBar: new AppBar(
+       appBar: new AppBar(
         title: new Text('Ad Test'),
-      ),*/
+      ),
       body: new Center(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             ElevatedButton(
               onPressed: () {
-                LoadAd().loadSplash();
+                Navigator.push(context, MaterialPageRoute(builder: (context){
+                  return SplashPage();
+                }));
               },
               child: const Text("加载开屏广告"),
               style: style,
@@ -95,6 +97,14 @@ class HomePage extends StatelessWidget {
               child: const Text("加载Draw信息流广告"),
               style: style,
             ),
+            Container(
+              width: width,
+              height: 200,
+              color: Colors.blue,
+              child: AndroidView(
+                viewType: YyAds.BANNER_VIEW,
+              ),
+            ),
           ],
         ),
       ),
@@ -102,15 +112,54 @@ class HomePage extends StatelessWidget {
   }
 }
 
+class SplashPage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => _SplashPage();
+}
+
+class _SplashPage extends State<SplashPage>{
+  @override
+  Widget build(BuildContext context) {
+    var width =  MediaQuery.of(context).size.width;
+    var height = MediaQuery.of(context).size.height;
+    LoadAd().loadSplash(context);
+    return Scaffold(
+      // appBar: AppBar(
+      //   title: Text("Splash"),
+      // ),
+      body: Center(
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  width: width,
+                  height: height,
+                  color: Colors.blue,
+                  child: AndroidView(
+                    viewType: YyAds.SPLASH_VIEW,
+                  ),
+                ),
+              ]
+          )
+      ),
+    );
+  }
+}
+
+
 class LoadAd {
-  void loadSplash() async {
+  late BuildContext _mContext;
+  void loadSplash(BuildContext context) async {
     Stream stream;
     try {
       stream = await YyAds.loadSplash(<String, dynamic>{
-        AdConfig.setPlacementId: "您的广告位id",
-        AdConfig.setTimeout: 3500
+        AdConfig.setPlacementId: "0000000032",
+        AdConfig.setTimeout: 3500,
+        AdConfig.setSplashClickType: AdConfig.LIMIT_CLICK_AREA,
+        AdConfig.setInteractionType: AdConfig.SPLASH_NORMAL
       });
-      stream.listen(_onData, onError: _onErrorData, onDone: _onDone);
+      stream.listen(_onSplashData, onError: _onErrorData, onDone: _onDone);
+      _mContext = context;
     } on PlatformException catch (s) {
       print(s);
     }
@@ -120,7 +169,7 @@ class LoadAd {
     Stream stream;
     try {
       stream = await YyAds.loadBanner(<String, dynamic>{
-        AdConfig.setPlacementId: "您的广告位id",
+        AdConfig.setPlacementId: "0000000040",
         AdConfig.isCarousel: false,
         AdConfig.setWidth: width.toInt(),
         AdConfig.setHeight: width * 58 ~/ 375,
@@ -135,7 +184,7 @@ class LoadAd {
     Stream stream;
     try {
       stream = await YyAds.loadInterstitial(<String, dynamic>{
-        AdConfig.setPlacementId: "您的广告位id",
+        AdConfig.setPlacementId: "0000000041",
         AdConfig.setOrientation: AdConfig.VERTICAl,
       });
       stream.listen(_onData, onError: _onErrorData, onDone: _onDone);
@@ -148,7 +197,7 @@ class LoadAd {
     Stream stream;
     try {
       stream = await YyAds.loadFullscreen(<String, dynamic>{
-        AdConfig.setPlacementId: "您的广告位id",
+        AdConfig.setPlacementId: "0000000046",
         AdConfig.setOrientation: AdConfig.VERTICAl,
       });
       stream.listen(_onData, onError: _onErrorData, onDone: _onDone);
@@ -161,10 +210,10 @@ class LoadAd {
     Stream stream;
     try {
       stream = await YyAds.loadReward(<String, dynamic>{
-        AdConfig.setPlacementId: "您的广告位id",
+        AdConfig.setPlacementId: "0000000034",
         AdConfig.setUserId: "321345",
         AdConfig.setCustomData: "xxxxx",
-        AdConfig.setOrientation: 1,
+        AdConfig.setOrientation: AdConfig.VERTICAl,
         AdConfig.setScenes: RitScenes.CUSTOMIZE_SCENES.value,
         AdConfig.setScenesMsg: "customize_scenes"
       });
@@ -178,7 +227,7 @@ class LoadAd {
     Stream stream;
     try {
       stream = await YyAds.loadNativeStream(<String, dynamic>{
-        AdConfig.setPlacementId: "您的广告位id",
+        AdConfig.setPlacementId: "0000000058",
         AdConfig.setWidth: width.toInt(),
         AdConfig.setHeight: 0,
       });
@@ -192,13 +241,22 @@ class LoadAd {
     Stream stream;
     try {
       stream = await YyAds.loadDrawStream(<String, dynamic>{
-        AdConfig.setPlacementId: "您的广告位id",
+        AdConfig.setPlacementId: "0000000063",
         AdConfig.setWidth: 500,
         AdConfig.setHeight: 500,
       });
       stream.listen(_onData, onError: _onErrorData, onDone: _onDone);
     } on PlatformException catch (s) {
       print(s);
+    }
+
+  }
+
+  void _onSplashData(message){
+    print('正常接收，$message');
+    var evet = message.toString();
+    if(evet == "onAdCanceled" || evet == "onError" || evet == "onTimeOut"){
+      Navigator.pop(_mContext);
     }
   }
 
