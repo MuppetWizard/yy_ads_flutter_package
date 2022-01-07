@@ -16,11 +16,10 @@ class AndroidViewFactory(
     createArgsCodec: MessageCodec<Any>?
 ) : PlatformViewFactory(createArgsCodec) {
 
-    private var viewPipe: SdkViewPipe? = null
-
     private var mListener: FactoryListener? = null
 
-    val getViewPipe = viewPipe
+    private var viewPipe: SdkViewPipe? = null
+    val getViewPipe get()  = viewPipe
 
     private var _isCreate = false
     val isCreate get() = _isCreate
@@ -28,9 +27,8 @@ class AndroidViewFactory(
     override fun create(context: Context, viewId: Int, args: Any?): PlatformView {
         viewPipe = SdkViewPipe(context)
         viewPipe?.container?.id = viewId
-        mListener?.onReady(viewPipe)
         _isCreate = true
-        UELogger.d("create $_isCreate")
+        mListener?.onReady(viewPipe)
         return viewPipe ?: SdkViewPipe(context)
     }
 

@@ -21,7 +21,7 @@ class BannerAdForFlutter(
 ) {
     private var bannerAd:BannerAd? = null
 
-    fun loadBanner(call: MethodCall, eventChannel: EventChannelManager, factory: AndroidViewFactory?) {
+    fun loadBanner(call: MethodCall, eventChannel: EventChannelManager, factory: AndroidViewFactory) {
         val placementId = call.argument<String>(Const.CallParams.placementId)
         val isCarousel = call.argument<Boolean>(Const.CallParams.isCarousel)
         val w = call.argument<Int>(Const.CallParams.width)
@@ -33,7 +33,7 @@ class BannerAdForFlutter(
         }.build()
         bannerAd = BannerAd()
         bannerAd?.setBannerConfig(context,config)
-        bannerAd?.loadAdBanner(bindAdListener(eventChannel,factory?.getViewPipe))
+        bannerAd?.loadAdBanner(bindAdListener(eventChannel,factory.getViewPipe))
     }
 
     private fun bindAdListener(eventChannel: EventChannelManager,viewPipe: SdkViewPipe?) = object : BannerAdListener {
@@ -72,6 +72,7 @@ class BannerAdForFlutter(
 
         override fun onLoaded(view: View?) {
             eventChannel.send("onLoaded")
+
             view?.let { viewPipe?.addView(it) } ?: eventChannel.sendError("10000","The View is Null","onError")
 
         }

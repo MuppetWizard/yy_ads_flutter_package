@@ -9,7 +9,6 @@ import com.youyi.yesdk.listener.StreamAdListener
 import com.youyi.yesdk.listener.UEVideoListener
 import com.youyi.yy_ads.Const
 import com.youyi.yy_ads.EventChannelManager
-import com.youyi.yy_ads.factory.AndroidViewFactory
 import com.youyi.yy_ads.factory.SdkViewPipe
 import io.flutter.plugin.common.MethodCall
 
@@ -24,7 +23,7 @@ class DrawStreamForFlutter(
     private var drawStreamAd: DrawStreamAd? = null
     private var streamView: StreamAdExpress? = null
 
-    fun loadDrawStream(call: MethodCall, eventResult: EventChannelManager,factory: AndroidViewFactory?) {
+    fun loadDrawStream(call: MethodCall, eventResult: EventChannelManager, viewPipe: SdkViewPipe?) {
         val placementId = call.argument<String>(Const.CallParams.placementId)
         val width = call.argument<Int>(Const.CallParams.width)
         val height = call.argument<Int>(Const.CallParams.height)
@@ -36,7 +35,7 @@ class DrawStreamForFlutter(
         }.build()
         drawStreamAd = DrawStreamAd()
         drawStreamAd?.setDrawStreamConfig(context,config)
-        drawStreamAd?.loadDrawStreamAd(bindAdListener(eventResult,factory?.getViewPipe))
+        drawStreamAd?.loadDrawStreamAd(bindAdListener(eventResult,viewPipe))
 
     }
 
@@ -89,7 +88,7 @@ class DrawStreamForFlutter(
                 val mView = it.getStreamView()
                 if (mView != null){
                     eventResult.send("onRenderSuccess")
-                    viewPipe?.addView(mView)
+                    viewPipe!!.addView(mView)
                 }else{
                     eventResult.sendError("60004", "onRenderFailed","render view is Null")
                 }

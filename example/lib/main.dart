@@ -92,17 +92,27 @@ class HomePage extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                LoadAd().loadDraw();
+                Navigator.push(context, MaterialPageRoute(builder: (context){
+                  return DrawStreamPage();
+                }));
               },
               child: const Text("加载Draw信息流广告"),
               style: style,
             ),
             Container(
               width: width,
-              height: 200,
+              height: 150,
               color: Colors.blue,
               child: AndroidView(
                 viewType: YyAds.BANNER_VIEW,
+              ),
+            ),
+            Container(
+              width: width,
+              height: 150,
+              color: Colors.blue,
+              child: AndroidView(
+                viewType: YyAds.NATIVE_STREAM_VIEW,
               ),
             ),
           ],
@@ -112,12 +122,7 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class SplashPage extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _SplashPage();
-}
-
-class _SplashPage extends State<SplashPage>{
+class SplashPage extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     var width =  MediaQuery.of(context).size.width;
@@ -146,6 +151,36 @@ class _SplashPage extends State<SplashPage>{
   }
 }
 
+class DrawStreamPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var width =  MediaQuery.of(context).size.width;
+    var height = MediaQuery.of(context).size.height;
+    LoadAd().loadDraw();
+    return Scaffold(
+      // appBar: AppBar(
+      //   title: Text("Splash"),
+      // ),
+      body: Center(
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  width: width,
+                  height: height,
+                  color: Colors.blue,
+                  child: AndroidView(
+                    viewType: YyAds.DRAW_STREAM_VIEW,
+                  ),
+                ),
+              ]
+          )
+      ),
+    );
+  }
+
+}
+
 
 class LoadAd {
   late BuildContext _mContext;
@@ -156,7 +191,7 @@ class LoadAd {
         AdConfig.setPlacementId: "0000000032",
         AdConfig.setTimeout: 3500,
         AdConfig.setSplashClickType: AdConfig.LIMIT_CLICK_AREA,
-        AdConfig.setInteractionType: AdConfig.SPLASH_NORMAL
+        AdConfig.setInteractionType: AdConfig.SPLASH_SLIP
       });
       stream.listen(_onSplashData, onError: _onErrorData, onDone: _onDone);
       _mContext = context;
@@ -243,7 +278,7 @@ class LoadAd {
       stream = await YyAds.loadDrawStream(<String, dynamic>{
         AdConfig.setPlacementId: "0000000063",
         AdConfig.setWidth: 500,
-        AdConfig.setHeight: 500,
+        AdConfig.setHeight: 0,
       });
       stream.listen(_onData, onError: _onErrorData, onDone: _onDone);
     } on PlatformException catch (s) {

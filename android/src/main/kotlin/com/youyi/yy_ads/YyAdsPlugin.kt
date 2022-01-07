@@ -73,11 +73,17 @@ class YyAdsPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
       }
       Const.ChannelMethod.LOAD_NATIVE_STREAM -> {
         val streamAd = NativeStreamForFlutter(activity)
-        streamAd.loadNativeStream(call,eventChannel,streamViewFactory)
+        if (streamViewFactory.isCreate) {
+          streamAd.loadNativeStream(call,eventChannel,streamViewFactory)
+        }
       }
       Const.ChannelMethod.LOAD_NATIVE_DRAW_STREAM -> {
         val drawStream = DrawStreamForFlutter(activity)
-        drawStream.loadDrawStream(call,eventChannel,drawStreamViewFactory)
+        drawStreamViewFactory.setViewFactoryListener(object : AndroidViewFactory.FactoryListener{
+          override fun onReady(viewPipe: SdkViewPipe?) {
+            drawStream.loadDrawStream(call,eventChannel,viewPipe)
+          }
+        })
       }
       else -> result.notImplemented()
     }

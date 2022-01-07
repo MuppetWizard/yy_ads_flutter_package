@@ -45,6 +45,6 @@ repositories {
 
 dependencies {
     api (name: 'youe_ad_sdk_v1.3.6.7', ext: 'aar')
-//    api (name: 'other_ad_3.3.17', ext:'aar')
+    api (name: 'other_ad_3.3.17', ext:'aar')
 
 }

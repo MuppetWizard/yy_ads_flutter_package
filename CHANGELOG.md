@@ -1,3 +1,8 @@
+## 1.2.0
+【New】Initialization added setCustomController()
+【New】Splash Adplacement to support the choice of interactive mode
+【fix】Fix known issues
+
 ## 1.1.0
 edit README.md, add Documentation
 
