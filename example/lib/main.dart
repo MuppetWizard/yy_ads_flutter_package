@@ -188,7 +188,7 @@ class LoadAd {
     Stream stream;
     try {
       stream = await YyAds.loadSplash(<String, dynamic>{
-        AdConfig.setPlacementId: "0000000032",
+        AdConfig.setPlacementId: "your placement id",
         AdConfig.setTimeout: 3500,
         AdConfig.setSplashClickType: AdConfig.LIMIT_CLICK_AREA,
         AdConfig.setInteractionType: AdConfig.SPLASH_SLIP
@@ -204,7 +204,7 @@ class LoadAd {
     Stream stream;
     try {
       stream = await YyAds.loadBanner(<String, dynamic>{
-        AdConfig.setPlacementId: "0000000040",
+        AdConfig.setPlacementId: "your placement id",
         AdConfig.isCarousel: false,
         AdConfig.setWidth: width.toInt(),
         AdConfig.setHeight: width * 58 ~/ 375,
@@ -219,7 +219,7 @@ class LoadAd {
     Stream stream;
     try {
       stream = await YyAds.loadInterstitial(<String, dynamic>{
-        AdConfig.setPlacementId: "0000000041",
+        AdConfig.setPlacementId: "your placement id",
         AdConfig.setOrientation: AdConfig.VERTICAl,
       });
       stream.listen(_onData, onError: _onErrorData, onDone: _onDone);
@@ -232,7 +232,7 @@ class LoadAd {
     Stream stream;
     try {
       stream = await YyAds.loadFullscreen(<String, dynamic>{
-        AdConfig.setPlacementId: "0000000046",
+        AdConfig.setPlacementId: "your placement id",
         AdConfig.setOrientation: AdConfig.VERTICAl,
       });
       stream.listen(_onData, onError: _onErrorData, onDone: _onDone);
@@ -245,7 +245,7 @@ class LoadAd {
     Stream stream;
     try {
       stream = await YyAds.loadReward(<String, dynamic>{
-        AdConfig.setPlacementId: "0000000034",
+        AdConfig.setPlacementId: "your placement id",
         AdConfig.setUserId: "321345",
         AdConfig.setCustomData: "xxxxx",
         AdConfig.setOrientation: AdConfig.VERTICAl,
@@ -262,7 +262,7 @@ class LoadAd {
     Stream stream;
     try {
       stream = await YyAds.loadNativeStream(<String, dynamic>{
-        AdConfig.setPlacementId: "0000000058",
+        AdConfig.setPlacementId: "your placement id",
         AdConfig.setWidth: width.toInt(),
         AdConfig.setHeight: 0,
       });
@@ -276,7 +276,7 @@ class LoadAd {
     Stream stream;
     try {
       stream = await YyAds.loadDrawStream(<String, dynamic>{
-        AdConfig.setPlacementId: "0000000063",
+        AdConfig.setPlacementId: "your placement id",
         AdConfig.setWidth: 500,
         AdConfig.setHeight: 0,
       });
