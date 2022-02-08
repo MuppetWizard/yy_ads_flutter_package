@@ -193,7 +193,7 @@ class LoadAd {
         AdConfig.setSplashClickType: AdConfig.LIMIT_CLICK_AREA,
         AdConfig.setInteractionType: AdConfig.SPLASH_SLIP
       });
-      stream.listen(_onSplashData, onError: _onErrorData, onDone: _onDone);
+      stream.listen(_onSplashData, onError: _onSplashError, onDone: _onDone);
       _mContext = context;
     } on PlatformException catch (s) {
       print(s);
@@ -293,6 +293,11 @@ class LoadAd {
     if(evet == "onAdCanceled" || evet == "onError" || evet == "onTimeOut"){
       Navigator.pop(_mContext);
     }
+  }
+
+  void _onSplashError(error){
+    print('错误接收：$error');
+    Navigator.pop(_mContext);
   }
 
   // Native端发送正常数据回调方法，每一次发送都会调用

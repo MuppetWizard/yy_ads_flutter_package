@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import com.youyi.yesdk.utils.UELogger
 import com.youyi.yy_ads.R
 import io.flutter.plugin.platform.PlatformView
 

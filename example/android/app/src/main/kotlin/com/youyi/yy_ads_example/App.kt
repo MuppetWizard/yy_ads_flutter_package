@@ -4,7 +4,6 @@ import android.text.format.Formatter
 import com.youyi.yesdk.YOUEAdSdk
 import com.youyi.yesdk.business.YOUEAdManager
 import com.youyi.yesdk.business.YOUECustomController
-import com.youyi.yesdk.utils.UELogger
 import io.flutter.app.FlutterApplication
 
 /**

@@ -1,7 +1,6 @@
 package com.youyi.yy_ads.factory
 
 import android.content.Context
-import com.youyi.yesdk.utils.UELogger
 import io.flutter.plugin.common.MessageCodec
 import io.flutter.plugin.platform.PlatformView
 import io.flutter.plugin.platform.PlatformViewFactory
